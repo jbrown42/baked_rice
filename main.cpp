@@ -3,8 +3,15 @@
 //
 
 #include <iostream>
+#include <vector>
+#include <map>
+#include <mutex>
+#include "Drone.h"
+#include "World.h"
 
 int main (){
-    printf("sup");
+    World::createWorld(15);
+    World::printMap();
+    Drone d = Drone();
     return 0;
 }
