@@ -9,7 +9,7 @@ using namespace std;
 int World::mapHeight;
 int World::mapWidth;
 
-bool debug = false;
+bool debug = true;
 
 /*coordinates stored (y,x)
   top left is (0,0)
@@ -60,12 +60,12 @@ queue<pair<int,int>> World::generatePath(){
 
     //want even number of steps so that we can add final desination
     if (numSteps%2 == 1) { //if odd
-        numSteps += 3; //3 incase we get 1, need at least 4 steps
-    } else {
-        if (numSteps = 0){
-            numSteps += 4;
-        } else {
-            numSteps += 2;//2 incase we get 0, need at least 4 steps
+        numSteps += 3; //need at least 4 steps and an even amount
+    } else { //if even
+        if (numSteps == 0) {
+            numSteps += 4; //incase rand generates a 4
+        } else {    //even integer >= 2
+            numSteps += 2; //need at least 4 steps and an even amount
         }
     }
 
