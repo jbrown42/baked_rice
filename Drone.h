@@ -19,7 +19,6 @@ private:
 public:
     Drone();
     std::pair<int,int> getPos();
-    void updatePos(int y, int x);
 };
 
 
