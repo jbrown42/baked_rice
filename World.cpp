@@ -85,6 +85,9 @@ queue<pair<int,int>> World::generatePath(){
             firstPos = false;
         } else {
             curPair.second = rand() % mapWidth;
+            if (curPair.second == 0) {
+                curPair.second += 1;
+            }
             firstPos = true;
         }
         ret.push(curPair);
