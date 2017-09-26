@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <stack>
 #include "World.h"
 #include "Drone.h"
 
@@ -11,18 +10,22 @@ using namespace std;
 
 Drone::Drone() {
     path = World::generatePath();
-    move();
+    takeoff();
 }
 
-void Drone::move(){
-    stack<pair<int,int>> returnPath;
+void Drone::takeoff() {
+    printf("attempting to takeoff\n");
     curX = path.front().second;
     curY = path.front().first;
     cout<<"("<<curY<<","<<curX<<")\n";
     returnPath.push((path.front()));
     path.pop();
     World::placeDrone(curY,curX);
+    printf("takeoff successful\n");
+    move();
+}
 
+void Drone::move(){
     while (!path.empty() || !returnPath.empty()) {
         if (path.empty()) {
             nextX = returnPath.top().second;
@@ -30,6 +33,9 @@ void Drone::move(){
         } else {
             nextX = path.front().second;
             nextY = path.front().first;
+        }
+        if (path.empty() && returnPath.size() == 1) {
+            printf("landing at airport\n");
         }
         cout<<"("<<nextY<<","<<nextX<<")\n";
         while (curY != nextY) {
@@ -59,10 +65,4 @@ void Drone::move(){
             path.pop();
         }
     }
-//    while (!returnPath.empty()){
-//        nextX = returnPath.top().second;
-//        nextY = returnPath.top().first;
-//        cout<<"("<<nextY<<","<<nextX<<")\n";
-//        returnPath.pop();
-//    }
 }

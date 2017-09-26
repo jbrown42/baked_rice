@@ -9,6 +9,8 @@ using namespace std;
 int World::mapHeight;
 int World::mapWidth;
 
+bool debug = false;
+
 /*coordinates stored (y,x)
   top left is (0,0)
   bottom left is (mapHeight-1,0)*/
@@ -18,7 +20,7 @@ void World::createWorld(int size) {
     mapHeight = size;
     mapWidth = size * 2;
     for(int i = 0; i < mapHeight; ++i){
-        for(int j = 0; j < mapWidth*2; ++j) {
+        for(int j = 0; j < mapWidth; ++j) {
             world[i].push_back("~");
         }
     }
@@ -26,8 +28,9 @@ void World::createWorld(int size) {
 }
 
 void World::printMap() {
+    if (debug) return;
     for(int i = 0; i < mapHeight; ++i) {
-        for (int j = 0; j < mapWidth*2; ++j) {
+        for (int j = 0; j < mapWidth; ++j) {
             cout<<" "<<world[i][j]<<" ";
         }
         cout<<endl;
