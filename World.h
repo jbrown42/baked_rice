@@ -9,6 +9,7 @@
 #include <map>
 #include <queue>
 #include <string>
+#include "Drone.h"
 
 class World {
 private:
@@ -20,6 +21,8 @@ public:
     static void createWorld(int size);
     static void printMap();
     static std::queue<std::pair<int,int>> generatePath();
+    static void placeDrone(int y, int x);
+    static void removeDrone(int y, int x);
 };
 
 #endif //BAKED_RICE_WORLD_H

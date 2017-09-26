@@ -32,6 +32,19 @@ void World::printMap() {
         }
         cout<<endl;
     }
+    cout<<endl;
+}
+
+void World::placeDrone(int y, int x) {
+    world[y][x] = "D";
+}
+
+void World::removeDrone(int y, int x) {
+    if ((y == mapHeight -1) && (x == 0)) {
+        world[y][x] = "A";
+    } else {
+        world[y][x] = "~";
+    }
 }
 
 queue<pair<int,int>> World::generatePath(){

@@ -13,8 +13,13 @@ private:
     std::queue<std::pair<int,int>> path;
     int curX;
     int curY;
+    int nextX;
+    int nextY;
+    void move();
 public:
     Drone();
+    std::pair<int,int> getPos();
+    void updatePos(int y, int x);
 };
 
 
