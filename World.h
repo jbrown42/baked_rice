@@ -18,6 +18,7 @@ private:
     static std::map<int,std::vector<std::string>> world;
     World(){};
 public:
+    static bool debug;
     static void createWorld(int size);
     static void printMap();
     static std::queue<std::pair<int,int>> generatePath();

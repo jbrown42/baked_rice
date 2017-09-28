@@ -8,8 +8,7 @@ using namespace std;
 
 int World::mapHeight;
 int World::mapWidth;
-
-bool debug = true;
+bool World::debug;
 
 /*coordinates stored (y,x)
   top left is (0,0)
