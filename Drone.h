@@ -19,6 +19,7 @@ private:
     int nextY;
     void move();
     void takeoff();
+    void land();
     long droneID;
 public:
     Drone(long ID);

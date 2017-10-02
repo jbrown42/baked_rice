@@ -15,7 +15,13 @@ Drone::Drone(long ID) {
 }
 
 void Drone::takeoff() {
+    //lock curNumDrones mutex;
+    //remove from cur#drones so not accounted for
+    //lock curNumDrones mutex;
     //lock takeoff mutex
+    //lock curNumDrones mutex;
+    //re-add to cur#drones
+    //lock curNumDrones mutex;
     printf("attempting to takeoff\n");
     curX = path.front().second;
     curY = path.front().first;
@@ -25,6 +31,15 @@ void Drone::takeoff() {
     World::placeDrone(curY,curX);
     printf("takeoff successful\n");
     move();
+}
+
+void Drone::land() {
+    //drone at airport
+    //remove drone from map, replace with A
+    //lock curNumDrones mutex;
+    //decrement cur#drones
+    //lock curNumDrones mutex;
+    //unlock takeoff mutex
 }
 
 void Drone::move(){
@@ -39,6 +54,13 @@ void Drone::move(){
         }
         if (path.empty() && returnPath.size() == 1) {
             printf("landing at airport\n");
+            //lock curNumDrones mutex;
+            //decrement cur#drones so don't wait for this one to move
+            //lock curNumDrones mutex;
+            //wait unlock takeoff unlocked
+            //lock curNumDrones mutex;
+            //re-add to cur#drones so this one moving counts again
+            //lock curNumDrones mutex;
         }
         cout<<"("<<nextY<<","<<nextX<<")\n";
         while (curY != nextY) {
@@ -76,5 +98,6 @@ void Drone::move(){
             path.pop();
         }
     }
-    //lock function
+    //landed at airport
+    //call land function
 }
