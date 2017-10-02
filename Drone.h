@@ -19,8 +19,9 @@ private:
     int nextY;
     void move();
     void takeoff();
+    long droneID;
 public:
-    Drone();
+    Drone(long ID);
     std::pair<int,int> getPos();
 };
 

@@ -49,31 +49,27 @@ void World::removeDrone(int y, int x) {
     }
 }
 
-queue<pair<int,int>> World::generatePath(){
+queue<pair<int,int>> World::generatePath(long startAlt){
     queue<pair<int,int>> ret;
     pair<int,int> curPair; //coordinates stored (y,x)
-    bool firstPos = true;
+    bool firstPos = false;
 
     srand((int)time(0)); //done so rand() is actually random everytime
     int numSteps = rand()%4; //number of steps to path
 
-    //want even number of steps so that we can add final desination
-    if (numSteps%2 == 1) { //if odd
-        numSteps += 3; //need at least 4 steps and an even amount
-    } else { //if even
-        if (numSteps == 0) {
-            numSteps += 4; //incase rand generates a 4
-        } else {    //even integer >= 2
-            numSteps += 2; //need at least 4 steps and an even amount
-        }
+    //want odd number of steps so that we can add final desination
+    if (numSteps%2 == 0) { //if even
+        numSteps += 1; //need at least 1 step and an odd amount
     }
 
     curPair.first = mapHeight -1;
     curPair.second = 0;
     ret.push(curPair);
+    curPair.first = startAlt;
+    ret.push(curPair);
 
     //first pos is airport(mapHeight -1,0) (needed for move function)
-    //second is (rand,0)
+    //second is (startAlt,0)
     //third is (last,rand)
     //fourth is (rand,last)
     //....

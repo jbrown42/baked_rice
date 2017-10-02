@@ -8,12 +8,14 @@
 
 using namespace std;
 
-Drone::Drone() {
-    path = World::generatePath();
+Drone::Drone(long ID) {
+    droneID = ID;
+    path = World::generatePath(droneID);
     takeoff();
 }
 
 void Drone::takeoff() {
+    //lock takeoff mutex
     printf("attempting to takeoff\n");
     curX = path.front().second;
     curY = path.front().first;
@@ -26,6 +28,7 @@ void Drone::takeoff() {
 }
 
 void Drone::move(){
+    //unlock takeoff mutex
     while (!path.empty() || !returnPath.empty()) {
         if (path.empty()) {
             nextX = returnPath.top().second;
@@ -46,7 +49,12 @@ void Drone::move(){
                 --curY;
             }
             World::placeDrone(curY,curX);
-            World::printMap();
+            //lock move mutex
+            //update moving shared resource
+            //check if == cur#drones
+                //yes = send allDronesMoves cv unlock
+            //unlock move mutex
+            //wait until droneCanMove cv unlocked
         }
         while (curX != nextX) {
             World::removeDrone(curY,curX);
@@ -56,7 +64,10 @@ void Drone::move(){
                 --curX;
             }
             World::placeDrone(curY,curX);
-            World::printMap();
+            //lock move mutex
+            //update moving shared resource
+            //unlock move mutex
+            //wait until droneCanMove cv unlocked
         }
         if (path.empty()) {
             returnPath.pop();
@@ -65,4 +76,5 @@ void Drone::move(){
             path.pop();
         }
     }
+    //lock function
 }

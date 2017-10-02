@@ -21,7 +21,7 @@ public:
     static bool debug;
     static void createWorld(int size);
     static void printMap();
-    static std::queue<std::pair<int,int>> generatePath();
+    static std::queue<std::pair<int,int>> generatePath(long longAlt);
     static void placeDrone(int y, int x);
     static void removeDrone(int y, int x);
 };

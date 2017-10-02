@@ -11,13 +11,34 @@
 
 const int numDrones = 2;
 pthread_t drones[numDrones];
-long dronesSize = 0;
+long curNumDrones = 0;
 int threadReturn;
-void* result;
+
+//mutexs
+pthread_mutex_t mDronesMoving;
+pthread_mutex_t mDronesCanMove;
+pthread_mutex_t mAllDronesMoved;
+
+//conditional vars
+pthread_cond_t dronesCanMove;
+pthread_cond_t allDronesMoved;
+
+//shared resources
+int numOfDronesMoved = 0;
+
 
 void* droneCreate(void* droneId) {
     std::cout<<"YAY "<<(long)droneId<<std::endl;
-    Drone d = Drone();
+    Drone d = Drone((long)droneId);
+}
+
+void* printMap(void*) {
+    while (true) {
+        //wait until allMove cv unlocked
+        //printMap
+        //reset move shared resource
+        //unlock droneCanMove cv
+    }
 }
 
 int main () {
@@ -41,12 +62,10 @@ int main () {
         World::debug = false;
     }
     World::createWorld(size);
-    World::printMap();
-//    Drone d = Drone();
 
     for (int i = 0; i < numDrones; ++i) {
-        threadReturn = pthread_create(&drones[dronesSize], NULL, droneCreate, (void *) (dronesSize));
-        dronesSize++;
+        threadReturn = pthread_create(&drones[curNumDrones], NULL, droneCreate, (void *) (curNumDrones));
+        curNumDrones++;
     }
 
     if (threadReturn) {
