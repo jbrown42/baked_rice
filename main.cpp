@@ -11,7 +11,7 @@
 #include "World.h"
 #include "Mthread.h"
 
-const int numDrones = 1;
+const int numDrones = 2;
 pthread_t drones[numDrones];
 int threadReturn;
 
@@ -21,13 +21,12 @@ void* droneCreate(void* droneId) {
 
 void* printMap(void*) {
     while (Mthread::curNumDrones != 0 || !Mthread::allDronesLaunched) { //while there are still drones flying or they haven't all launched
-        printf("waiting for drones to move\n");
+        printf("map wait\n");
         pthread_cond_wait(&Mthread::allDronesMoved,&Mthread::mAllDronesMoved);
         World::printMap();
-        printf("drones moved\n");
-        pthread_mutex_lock(&Mthread::mDronesMoving);
+        pthread_mutex_lock(&Mthread::mNumDronesMoved);
         Mthread::numOfDronesMoved = 0;
-        pthread_mutex_unlock(&Mthread::mDronesMoving);
+        pthread_mutex_unlock(&Mthread::mNumDronesMoved);
         for (int i = 0; i <numDrones; ++i) {
             pthread_cond_signal(&Mthread::dronesCanMove);
         }
@@ -41,12 +40,6 @@ void* printMap(void*) {
 int main () {
 
     Mthread::init();
-
-    pthread_t printMapThread;
-    threadReturn = pthread_create(&printMapThread,NULL,printMap,NULL);
-    if (threadReturn) {
-        std::cout << "thread creation error" << std::endl;
-    }
 
     int size;
     char db;
@@ -68,6 +61,12 @@ int main () {
         World::debug = false;
     }
     World::createWorld(size);
+
+    pthread_t printMapThread;
+    threadReturn = pthread_create(&printMapThread,NULL,printMap,NULL);
+    if (threadReturn) {
+        std::cout << "thread creation error" << std::endl;
+    }
 
     for (int i = 0; i < numDrones; ++i) {
         pthread_mutex_lock(&Mthread::mTakeoff);

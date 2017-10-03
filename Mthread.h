@@ -13,7 +13,7 @@ private:
     Mthread();
 public:
     //mutexs
-    static pthread_mutex_t mDronesMoving;
+    static pthread_mutex_t mNumDronesMoved;
     static pthread_mutex_t mDronesCanMove;
     static pthread_mutex_t mAllDronesMoved;
     static pthread_mutex_t mCurNumDrones;
@@ -28,7 +28,7 @@ public:
     static long curNumDrones;
     static bool allDronesLaunched;
 
-    static int waitTime;
+    static struct timespec waitTime;
 
     static void init();
 };

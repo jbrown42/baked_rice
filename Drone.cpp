@@ -4,7 +4,6 @@
 
 #include <pthread.h>
 #include <iostream>
-#include <sys/wait.h>
 #include "World.h"
 #include "Drone.h"
 #include "Mthread.h"
@@ -41,11 +40,11 @@ void Drone::land() {
     World::removeDrone(curY,curX);
     pthread_mutex_lock(&Mthread::mCurNumDrones);
     --Mthread::curNumDrones;
-    printf("%d landed, %d drones left\n", droneID,Mthread::curNumDrones);
-    if (Mthread::curNumDrones >= Mthread::numOfDronesMoved) {
-        pthread_cond_signal(&Mthread::allDronesMoved);
-    }
     pthread_mutex_unlock(&Mthread::mCurNumDrones);
+    printf("%d landed, %d drones left\n", droneID,Mthread::curNumDrones);
+//    if (Mthread::curNumDrones >= Mthread::numOfDronesMoved) {
+//        pthread_cond_signal(&Mthread::allDronesMoved);
+//    }
     pthread_mutex_unlock(&Mthread::mTakeoff);
     //unlock takeoff mutex
 }
@@ -85,17 +84,17 @@ void Drone::move(){
                 --curY;
             }
             World::placeDrone(curY,curX,droneID);
-            pthread_mutex_lock(&Mthread::mDronesMoving);
-            pthread_mutex_lock(&Mthread::mCurNumDrones);
+            pthread_mutex_lock(&Mthread::mNumDronesMoved);
             ++Mthread::numOfDronesMoved;
+            pthread_mutex_lock(&Mthread::mCurNumDrones);
             if (Mthread::numOfDronesMoved >= Mthread::curNumDrones) {
+                nanosleep(&Mthread::waitTime,NULL);
                 pthread_cond_signal(&Mthread::allDronesMoved);
             }
-            pthread_mutex_unlock(&Mthread::mDronesMoving);
+            pthread_mutex_unlock(&Mthread::mNumDronesMoved);
             pthread_mutex_unlock(&Mthread::mCurNumDrones);
-            printf("%d waiting for map print y\n",droneID);
+            printf("%d drone wait\n",droneID);
             pthread_cond_wait(&Mthread::dronesCanMove,&Mthread::mDronesCanMove);
-            printf("%d map printed y\n",droneID);
             //lock move mutex
             //update moving shared resource
             //check if == cur#drones
@@ -103,8 +102,9 @@ void Drone::move(){
             //unlock move mutex
             //wait until droneCanMove cv unlocked
         }
-
-        pthread_mutex_unlock(&Mthread::mTakeoff);
+        if (path.size() != 0) {
+            pthread_mutex_unlock(&Mthread::mTakeoff);
+        }
         //unlock takeoff mutex
 
         while (curX != nextX) {
@@ -115,17 +115,17 @@ void Drone::move(){
                 --curX;
             }
             World::placeDrone(curY,curX,droneID);
-            pthread_mutex_lock(&Mthread::mDronesMoving);
-            pthread_mutex_lock(&Mthread::mCurNumDrones);
+            pthread_mutex_lock(&Mthread::mNumDronesMoved);
             ++Mthread::numOfDronesMoved;
+            pthread_mutex_lock(&Mthread::mCurNumDrones);
             if (Mthread::numOfDronesMoved >= Mthread::curNumDrones) {
+                nanosleep(&Mthread::waitTime,NULL);
                 pthread_cond_signal(&Mthread::allDronesMoved);
             }
-            pthread_mutex_unlock(&Mthread::mDronesMoving);
+            pthread_mutex_unlock(&Mthread::mNumDronesMoved);
             pthread_mutex_unlock(&Mthread::mCurNumDrones);
-            printf("%d waiting for map print x\n",droneID);
+            printf("%d drone wait\n",droneID);
             pthread_cond_wait(&Mthread::dronesCanMove,&Mthread::mDronesCanMove);
-            printf("%d map printed x\n",droneID);            //lock move mutex
             //update moving shared resource
             //unlock move mutex
             //wait until droneCanMove cv unlocked
