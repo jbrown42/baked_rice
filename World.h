@@ -16,13 +16,13 @@ private:
     static int mapHeight;
     static int mapWidth;
     static std::map<int,std::vector<std::string>> world;
-    World(){};
+    World();
 public:
     static bool debug;
     static void createWorld(int size);
     static void printMap();
     static std::queue<std::pair<int,int>> generatePath(long longAlt);
-    static void placeDrone(int y, int x);
+    static void placeDrone(int y, int x, int ID);
     static void removeDrone(int y, int x);
 };
 

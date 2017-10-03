@@ -37,8 +37,8 @@ void World::printMap() {
     cout<<endl;
 }
 
-void World::placeDrone(int y, int x) {
-    world[y][x] = "D";
+void World::placeDrone(int y, int x, int ID) {
+    world[y][x] = to_string(ID);
 }
 
 void World::removeDrone(int y, int x) {

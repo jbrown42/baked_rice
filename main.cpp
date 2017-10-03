@@ -6,35 +6,31 @@
 #include <pthread.h>
 #include <mutex>
 #include <vector>
+#include <sys/wait.h>
 #include "Drone.h"
 #include "World.h"
+#include "Mthread.h"
 
-const int numDrones = 2;
+const int numDrones = 1;
 pthread_t drones[numDrones];
 int threadReturn;
 
-//mutexs
-pthread_mutex_t mDronesMoving;
-pthread_mutex_t mDronesCanMove;
-pthread_mutex_t mAllDronesMoved;
-pthread_mutex_t mCurNumDrones;
-
-//conditional vars
-pthread_cond_t dronesCanMove;
-pthread_cond_t allDronesMoved;
-
-//shared resources
-int numOfDronesMoved = 0;
-long curNumDrones = 0;
-bool allDronesLaunched = false;
-
 void* droneCreate(void* droneId) {
-    std::cout<<"YAY "<<(long)droneId<<std::endl;
     Drone d = Drone((long)droneId);
 }
 
 void* printMap(void*) {
-    while (curNumDrones != 0 || !allDronesLaunched) { //while there are still drones flying or they haven't all launched
+    while (Mthread::curNumDrones != 0 || !Mthread::allDronesLaunched) { //while there are still drones flying or they haven't all launched
+        printf("waiting for drones to move\n");
+        pthread_cond_wait(&Mthread::allDronesMoved,&Mthread::mAllDronesMoved);
+        World::printMap();
+        printf("drones moved\n");
+        pthread_mutex_lock(&Mthread::mDronesMoving);
+        Mthread::numOfDronesMoved = 0;
+        pthread_mutex_unlock(&Mthread::mDronesMoving);
+        for (int i = 0; i <numDrones; ++i) {
+            pthread_cond_signal(&Mthread::dronesCanMove);
+        }
         //wait until allMove cv unlocked
         //printMap
         //reset numMoved shared resource
@@ -43,9 +39,14 @@ void* printMap(void*) {
 }
 
 int main () {
-    //init all mutexs and cvs
 
-    //create pthread for printMap(void*)
+    Mthread::init();
+
+    pthread_t printMapThread;
+    threadReturn = pthread_create(&printMapThread,NULL,printMap,NULL);
+    if (threadReturn) {
+        std::cout << "thread creation error" << std::endl;
+    }
 
     int size;
     char db;
@@ -55,7 +56,7 @@ int main () {
         printf("Woah! That's way too small, try 8 or higher\n");
         scanf("%d",&size);
     }
-    printf("Are you debugging? (y/n)\n");
+    printf("Are you debugging?\n");
     scanf("%c",&db);
     while (db != 'y' && db != 'n') {
         printf("Please enter y or n\n");
@@ -69,17 +70,18 @@ int main () {
     World::createWorld(size);
 
     for (int i = 0; i < numDrones; ++i) {
-        threadReturn = pthread_create(&drones[curNumDrones], NULL, droneCreate, (void *) (curNumDrones));
-        //lock curNumDrones mutex;
-        curNumDrones++;
-        //unlock curNumDrones mutex;
+        pthread_mutex_lock(&Mthread::mTakeoff);
+        threadReturn = pthread_create(&drones[Mthread::curNumDrones], NULL, droneCreate, (void *) (Mthread::curNumDrones));
+        pthread_mutex_lock(&Mthread::mCurNumDrones);
+        ++Mthread::curNumDrones;
+        pthread_mutex_unlock(&Mthread::mCurNumDrones);
 
         if (threadReturn) {
             std::cout << "thread creation error" << std::endl;
         }
     }
 
-    allDronesLaunched = true;
+    Mthread::allDronesLaunched = true;
 
     pthread_exit(NULL);
 
