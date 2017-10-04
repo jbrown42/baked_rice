@@ -4,15 +4,17 @@
 
 #include "Mthread.h"
 
+//shared resources
 int Mthread::numOfDronesMoved = 0;
-long Mthread::curNumDrones = 0;
 bool Mthread::allDronesLaunched = false;
+int Mthread::numDronesTakenOff = 0;
 struct timespec Mthread::waitTime = {0};
 
+//mutexs
 pthread_mutex_t Mthread::mNumDronesMoved;
 pthread_mutex_t Mthread::mDronesCanMove;
 pthread_mutex_t Mthread::mAllDronesMoved;
-pthread_mutex_t Mthread::mCurNumDrones;
+pthread_mutex_t Mthread::mNumDronesTakenOff;
 pthread_mutex_t Mthread::mTakeoff;
 
 //conditional vars
@@ -24,7 +26,7 @@ void Mthread::init() {
     pthread_mutex_init(&mNumDronesMoved,NULL);
     pthread_mutex_init(&mDronesCanMove,NULL);
     pthread_mutex_init(&mAllDronesMoved,NULL);
-    pthread_mutex_init(&mCurNumDrones,NULL);
+    pthread_mutex_init(&mNumDronesTakenOff,NULL);
     pthread_mutex_init(&mTakeoff,NULL);
 
     pthread_cond_init(&dronesCanMove,NULL);

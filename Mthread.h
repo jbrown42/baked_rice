@@ -16,7 +16,7 @@ public:
     static pthread_mutex_t mNumDronesMoved;
     static pthread_mutex_t mDronesCanMove;
     static pthread_mutex_t mAllDronesMoved;
-    static pthread_mutex_t mCurNumDrones;
+    static pthread_mutex_t mNumDronesTakenOff;
     static pthread_mutex_t mTakeoff;
 
     //conditional vars
@@ -25,8 +25,8 @@ public:
 
     //shared resources
     static int numOfDronesMoved;
-    static long curNumDrones;
     static bool allDronesLaunched;
+    static int numDronesTakenOff;
 
     static struct timespec waitTime;
 
