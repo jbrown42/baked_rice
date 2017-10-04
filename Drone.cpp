@@ -27,6 +27,7 @@ void Drone::takeoff() {
 }
 
 void Drone::land() {
+    pthread_mutex_unlock(&Mthread::mDronesCanMove);
     printf("%d %d\n",Mthread::numDronesTakenOff,Mthread::numOfDronesMoved);
     pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
     Mthread::numDronesTakenOff -= 1;
@@ -34,7 +35,7 @@ void Drone::land() {
 //    pthread_mutex_unlock(&Mthread::mTakeoff);
     World::removeDrone(curY,curX);
     if (Mthread::numDronesTakenOff == 0) {
-        World::printMap();
+        pthread_cond_signal(&Mthread::allDronesMoved);
     }
     printf("%d %d\n",Mthread::numDronesTakenOff,Mthread::numOfDronesMoved);
     pthread_exit(NULL);
@@ -65,7 +66,7 @@ void Drone::move(){
             pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
             Mthread::numOfDronesMoved += 1;
             if (Mthread::numOfDronesMoved >= Mthread::numDronesTakenOff) {
-                printf("drone signal\n");
+//                printf("drone signal\n");
                 pthread_cond_signal(&Mthread::allDronesMoved);
             }
             pthread_mutex_unlock(&Mthread::mNumDronesMoved);
@@ -93,7 +94,7 @@ void Drone::move(){
                     pthread_mutex_unlock(&Mthread::mTakeoff);
                     pthread_cond_broadcast(&Mthread::dronesCanMove);
                 }
-                printf("drone signal\n");
+//                printf("drone signal\n");
                 pthread_cond_signal(&Mthread::allDronesMoved);
             }
             pthread_mutex_unlock(&Mthread::mNumDronesMoved);
