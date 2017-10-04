@@ -27,9 +27,17 @@ void Drone::takeoff() {
 }
 
 void Drone::land() {
-    printf("landing %d\n", droneID);
+    printf("%d %d\n",Mthread::numDronesTakenOff,Mthread::numOfDronesMoved);
+    pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
+    Mthread::numDronesTakenOff -= 1;
+    pthread_mutex_unlock(&Mthread::mNumDronesTakenOff);
+//    pthread_mutex_unlock(&Mthread::mTakeoff);
     World::removeDrone(curY,curX);
-
+    if (Mthread::numDronesTakenOff == 0) {
+        World::printMap();
+    }
+    printf("%d %d\n",Mthread::numDronesTakenOff,Mthread::numOfDronesMoved);
+    pthread_exit(NULL);
 }
 
 void Drone::move(){
@@ -42,6 +50,7 @@ void Drone::move(){
             nextY = path.front().first;
         }
         if (path.empty() && returnPath.size() == 1) {
+//            pthread_mutex_lock(&Mthread::mTakeoff);
             printf("landing at airport\n");
         }
         while (curY != nextY) {
@@ -56,11 +65,14 @@ void Drone::move(){
             pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
             Mthread::numOfDronesMoved += 1;
             if (Mthread::numOfDronesMoved >= Mthread::numDronesTakenOff) {
+                printf("drone signal\n");
                 pthread_cond_signal(&Mthread::allDronesMoved);
             }
             pthread_mutex_unlock(&Mthread::mNumDronesMoved);
             pthread_mutex_unlock(&Mthread::mNumDronesTakenOff);
+//            printf("%d drone waiting\n",droneID);
             pthread_cond_wait(&Mthread::dronesCanMove,&Mthread::mDronesCanMove);
+//            printf("%d done waiting\n",droneID);
         }
 
         while (curX != nextX) {
@@ -81,11 +93,14 @@ void Drone::move(){
                     pthread_mutex_unlock(&Mthread::mTakeoff);
                     pthread_cond_broadcast(&Mthread::dronesCanMove);
                 }
+                printf("drone signal\n");
                 pthread_cond_signal(&Mthread::allDronesMoved);
             }
             pthread_mutex_unlock(&Mthread::mNumDronesMoved);
             pthread_mutex_unlock(&Mthread::mNumDronesTakenOff);
+//            printf("%d drone waiting\n",droneID);
             pthread_cond_wait(&Mthread::dronesCanMove,&Mthread::mDronesCanMove);
+//            printf("%d done waiting\n",droneID);
         }
         if (path.empty()) {
             returnPath.pop();
@@ -94,5 +109,6 @@ void Drone::move(){
             path.pop();
         }
     }
+    printf("%d at airport\n",droneID);
     land();
 }

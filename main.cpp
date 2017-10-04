@@ -10,7 +10,7 @@
 #include "World.h"
 #include "Mthread.h"
 
-static const int numDrones = 2;
+static const int numDrones = 3;
 pthread_t drones[numDrones];
 int threadReturn;
 long curNumDrones = 0;
@@ -21,14 +21,17 @@ void* droneCreate(void* droneId) {
 
 void* printMap(void*) {
     while (Mthread::numDronesTakenOff != 0 || !Mthread::allDronesLaunched) { //while there are still drones flying or they haven't all launched
+        printf("map waiting\n");
         pthread_cond_wait(&Mthread::allDronesMoved,&Mthread::mAllDronesMoved);
         pthread_mutex_lock(&Mthread::mNumDronesMoved);
         World::printMap();
         Mthread::numOfDronesMoved = 0;
+        printf("map signal\n");
         pthread_mutex_unlock(&Mthread::mNumDronesMoved);
         pthread_cond_broadcast(&Mthread::dronesCanMove);
     }
-    World::printMap();
+    printf("Killing map\n");
+    pthread_exit(NULL);
 }
 
 int main () {
@@ -37,10 +40,10 @@ int main () {
 
     int size;
     char db;
-    printf("What size map would you like? (>=8)\n");
+    printf("What size map would you like? (>=6)\n");
     scanf("%d",&size);
-    while (size < 8) {
-        printf("Woah! That's way too small, try 8 or higher\n");
+    while (size < 6) {
+        printf("Woah! That's way too small, try 6 or higher\n");
         scanf("%d",&size);
     }
     printf("Are you debugging?\n");

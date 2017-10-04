@@ -33,5 +33,5 @@ void Mthread::init() {
     pthread_cond_init(&allDronesMoved,NULL);
 
     waitTime.tv_sec = 0;
-    waitTime.tv_nsec = 500000;
+    waitTime.tv_nsec = 5000000;
 }

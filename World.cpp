@@ -4,6 +4,8 @@
 #include <iostream>
 #include <ctime>
 #include "World.h"
+#include "Mthread.h"
+
 using namespace std;
 
 int World::mapHeight;
