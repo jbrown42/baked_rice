@@ -28,6 +28,7 @@ void Drone::takeoff() {
     Mthread::numDronesInAir += 1;
     pthread_mutex_unlock(&Mthread::mNumDronesInAir);
     Mthread::droneTakingOff = false;
+    printf("%d takeoff sucessful\n",droneID);
     pthread_cond_broadcast(&Mthread::cDroneTakeOff);
     pthread_mutex_unlock(&Mthread::mTakeoff);
     move();
@@ -63,6 +64,7 @@ void Drone::move(){
                 --curY;
             }
             World::placeDrone(curY,curX,droneID);
+
         }
 
         while (curX != nextX) {
