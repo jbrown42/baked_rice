@@ -55,6 +55,8 @@ int main () {
     }
 
     for (int i = 0; i < numDrones; ++i) {
+        pthread_mutex_lock(&Mthread::mTakeoff);
+        Mthread::droneTakingOff = true;
         threadReturn = pthread_create(&drones[Mthread::curNumDrones], NULL, droneCreate, (void *) i);
 
         if (threadReturn) {

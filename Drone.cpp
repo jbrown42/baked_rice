@@ -24,6 +24,12 @@ void Drone::takeoff() {
     returnPath.push((path.front()));
     path.pop();
     World::placeDrone(curY,curX,droneID);
+    pthread_mutex_lock(&Mthread::mNumDronesInAir);
+    Mthread::numDronesInAir += 1;
+    pthread_mutex_unlock(&Mthread::mNumDronesInAir);
+    Mthread::droneTakingOff = false;
+    pthread_cond_broadcast(&Mthread::cDroneTakeOff);
+    pthread_mutex_unlock(&Mthread::mTakeoff);
     move();
 }
 
@@ -45,6 +51,11 @@ void Drone::move(){
         }
         cout<<droneID<<"("<<nextY<<","<<nextX<<")\n";
         while (curY != nextY) {
+            pthread_mutex_lock(&Mthread::mTakeoff);
+            if (Mthread::droneTakingOff) {
+                pthread_cond_wait(&Mthread::cDroneTakeOff,&Mthread::mTakeoff);
+            }
+            pthread_mutex_unlock(&Mthread::mTakeoff);
             World::removeDrone(curY,curX);
             if (curY < nextY) {
                 ++curY;
@@ -55,6 +66,11 @@ void Drone::move(){
         }
 
         while (curX != nextX) {
+            pthread_mutex_lock(&Mthread::mTakeoff);
+            if (Mthread::droneTakingOff) {
+                pthread_cond_wait(&Mthread::cDroneTakeOff,&Mthread::mTakeoff);
+            }
+            pthread_mutex_unlock(&Mthread::mTakeoff);
             World::removeDrone(curY,curX);
             if (curX < nextX) {
                 ++curX;

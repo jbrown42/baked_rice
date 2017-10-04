@@ -13,20 +13,22 @@ private:
     Mthread();
 public:
     //mutexs
-    static pthread_mutex_t mNumDronesMoved;
+    static pthread_mutex_t mNumDronesInAir;
     static pthread_mutex_t mDronesCanMove;
     static pthread_mutex_t mAllDronesMoved;
     static pthread_mutex_t mCurNumDrones;
     static pthread_mutex_t mTakeoff;
 
     //conditional vars
-    static pthread_cond_t dronesCanMove;
-    static pthread_cond_t allDronesMoved;
+    static pthread_cond_t cDronesCanMove;
+    static pthread_cond_t cAllDronesMoved;
+    static pthread_cond_t cDroneTakeOff;
 
     //shared resources
-    static int numOfDronesMoved;
+    static int numDronesInAir;
     static long curNumDrones;
     static bool allDronesLaunched;
+    static bool droneTakingOff;
 
     static struct timespec waitTime;
 
