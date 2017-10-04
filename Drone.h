@@ -21,6 +21,7 @@ private:
     void takeoff();
     void land();
     long droneID;
+    bool takingOff;
 public:
     Drone(long ID);
     std::pair<int,int> getPos();
