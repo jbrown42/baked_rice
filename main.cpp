@@ -21,13 +21,15 @@ void* droneCreate(void* droneId) {
 
 void* printMap(void*) {
     while (Mthread::numDronesTakenOff != 0 || !Mthread::allDronesLaunched) { //while there are still drones flying or they haven't all launched
-//        printf("map waiting\n");
+        pthread_mutex_lock(&Mthread::mAllDronesMoved);
         pthread_cond_wait(&Mthread::allDronesMoved,&Mthread::mAllDronesMoved);
-        pthread_mutex_lock(&Mthread::mNumDronesMoved);
+        pthread_mutex_unlock(&Mthread::mAllDronesMoved);
+        pthread_mutex_lock(&Mthread::mDronesCanMove);
         World::printMap();
+        pthread_mutex_lock(&Mthread::mNumDronesMoved);
         Mthread::numOfDronesMoved = 0;
-//        printf("map signal\n");
         pthread_mutex_unlock(&Mthread::mNumDronesMoved);
+        pthread_mutex_unlock(&Mthread::mDronesCanMove);
         pthread_cond_broadcast(&Mthread::dronesCanMove);
     }
     printf("Killing map\n");

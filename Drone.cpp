@@ -27,8 +27,6 @@ void Drone::takeoff() {
 }
 
 void Drone::land() {
-    pthread_mutex_unlock(&Mthread::mDronesCanMove);
-    printf("%d %d\n",Mthread::numDronesTakenOff,Mthread::numOfDronesMoved);
     pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
     Mthread::numDronesTakenOff -= 1;
     pthread_mutex_unlock(&Mthread::mNumDronesTakenOff);
@@ -37,7 +35,6 @@ void Drone::land() {
     if (Mthread::numDronesTakenOff == 0) {
         pthread_cond_signal(&Mthread::allDronesMoved);
     }
-    printf("%d %d\n",Mthread::numDronesTakenOff,Mthread::numOfDronesMoved);
     pthread_exit(NULL);
 }
 
@@ -52,7 +49,6 @@ void Drone::move(){
         }
         if (path.empty() && returnPath.size() == 1) {
 //            pthread_mutex_lock(&Mthread::mTakeoff);
-            printf("landing at airport\n");
         }
         while (curY != nextY) {
             World::removeDrone(curY,curX);
@@ -62,18 +58,20 @@ void Drone::move(){
                 --curY;
             }
             World::placeDrone(curY,curX,droneID);
+            pthread_mutex_lock(&Mthread::mAllDronesMoved);
             pthread_mutex_lock(&Mthread::mNumDronesMoved);
-            pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
             Mthread::numOfDronesMoved += 1;
+            pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
+            pthread_mutex_unlock(&Mthread::mAllDronesMoved);
             if (Mthread::numOfDronesMoved >= Mthread::numDronesTakenOff) {
-//                printf("drone signal\n");
+                nanosleep(&Mthread::waitTime,NULL);
                 pthread_cond_signal(&Mthread::allDronesMoved);
             }
             pthread_mutex_unlock(&Mthread::mNumDronesMoved);
             pthread_mutex_unlock(&Mthread::mNumDronesTakenOff);
-//            printf("%d drone waiting\n",droneID);
+            pthread_mutex_lock(&Mthread::mDronesCanMove);
             pthread_cond_wait(&Mthread::dronesCanMove,&Mthread::mDronesCanMove);
-//            printf("%d done waiting\n",droneID);
+            pthread_mutex_unlock(&Mthread::mDronesCanMove);
         }
 
         while (curX != nextX) {
@@ -84,24 +82,25 @@ void Drone::move(){
                 --curX;
             }
             World::placeDrone(curY,curX,droneID);
+            pthread_mutex_lock(&Mthread::mAllDronesMoved);
             pthread_mutex_lock(&Mthread::mNumDronesMoved);
-            pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
             Mthread::numOfDronesMoved += 1;
+            pthread_mutex_lock(&Mthread::mNumDronesTakenOff);
+            pthread_mutex_unlock(&Mthread::mAllDronesMoved);
             if (Mthread::numOfDronesMoved >= Mthread::numDronesTakenOff) {
                 if (takingOff) {
-                    takingOff = false;
                     Mthread::numDronesTakenOff += 1;
                     pthread_mutex_unlock(&Mthread::mTakeoff);
-                    pthread_cond_broadcast(&Mthread::dronesCanMove);
+                    takingOff = false;
                 }
-//                printf("drone signal\n");
+                nanosleep(&Mthread::waitTime,NULL);
                 pthread_cond_signal(&Mthread::allDronesMoved);
             }
             pthread_mutex_unlock(&Mthread::mNumDronesMoved);
             pthread_mutex_unlock(&Mthread::mNumDronesTakenOff);
-//            printf("%d drone waiting\n",droneID);
+            pthread_mutex_lock(&Mthread::mDronesCanMove);
             pthread_cond_wait(&Mthread::dronesCanMove,&Mthread::mDronesCanMove);
-//            printf("%d done waiting\n",droneID);
+            pthread_mutex_unlock(&Mthread::mDronesCanMove);
         }
         if (path.empty()) {
             returnPath.pop();
@@ -110,6 +109,5 @@ void Drone::move(){
             path.pop();
         }
     }
-    printf("%d at airport\n",droneID);
     land();
 }
