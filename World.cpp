@@ -38,6 +38,9 @@ void World::printMap() {
 }
 
 void World::placeDrone(int y, int x, int ID) {
+    if (world[y][x] != "~" && world[y][x] != "A") {
+        printf("COLLISION\n");
+    }
     world[y][x] = to_string(ID);
 }
 

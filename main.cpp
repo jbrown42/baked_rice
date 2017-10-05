@@ -10,8 +10,7 @@
 #include "World.h"
 #include "Mthread.h"
 
-const int numDrones = 3;
-pthread_t drones[numDrones];
+int numDrones;
 int threadReturn;
 
 void* droneCreate(void* droneId) {
@@ -31,6 +30,13 @@ int main () {
         printf("Woah! That's way too small, try 8 or higher\n");
         scanf("%d",&size);
     }
+    printf("How many drones? (0<n<10)\n");
+    scanf("%d",&numDrones);
+    while(numDrones <= 0 || numDrones >= 10) {
+        printf("Come on now, at least one drone, at most ten.\n");
+        scanf("%d",&numDrones);
+    }
+    pthread_t drones[numDrones];
     printf("Are you debugging?\n");
     scanf(" %c",&db);
     while (db != 'y' && db != 'n') {
@@ -45,8 +51,6 @@ int main () {
     World::createWorld(size);
 
     for (int i = 0; i < numDrones; ++i) {
-        //lock takeoff
-        //set droneTakingOff = true
         pthread_mutex_lock(&Mthread::mTakeoff);
         Mthread::droneTakingOff = true;
         threadReturn = pthread_create(&drones[i], NULL, droneCreate, (void *) i);
