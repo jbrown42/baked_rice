@@ -12,7 +12,7 @@ bool Mthread::allDronesMoved = false;
 struct timespec Mthread::waitTime = {0};
 
 pthread_mutex_t Mthread::mNumDronesInAir;
-pthread_mutex_t Mthread::mDronesCanMove;
+pthread_mutex_t Mthread::mDroneMoving;
 pthread_mutex_t Mthread::mAllDronesMoved;
 pthread_mutex_t Mthread::mNumDronesMoved;
 pthread_mutex_t Mthread::mTakeoff;
@@ -25,7 +25,7 @@ pthread_cond_t Mthread::cDroneTakeOff;
 void Mthread::init() {
     //init all mutexs and cvs
     pthread_mutex_init(&mNumDronesInAir,NULL);
-    pthread_mutex_init(&mDronesCanMove,NULL);
+    pthread_mutex_init(&mDroneMoving,NULL);
     pthread_mutex_init(&mAllDronesMoved,NULL);
     pthread_mutex_init(&mNumDronesMoved,NULL);
     pthread_mutex_init(&mTakeoff,NULL);
@@ -35,5 +35,5 @@ void Mthread::init() {
     pthread_cond_init(&cDroneTakeOff,NULL);
 
     waitTime.tv_sec = 0;
-    waitTime.tv_nsec = 500000;
+    waitTime.tv_nsec = 500000000;
 }

@@ -25,11 +25,25 @@ void Drone::takeoff() {
     returnPath.push((path.front()));
     path.pop();
     World::placeDrone(curY,curX,droneID);
+    Mthread::numDronesInAir += 1;
+    //wait on cMove mMove
+    //increment #inAir
     move();
 }
 
 void Drone::land() {
-
+    Mthread::numDronesInAir -= 1;
+    World::removeDrone(curY,curX);
+    pthread_mutex_lock(&Mthread::mDroneMoving);
+    if (Mthread::numDronesMoved == Mthread::numDronesInAir) {
+        World::printMap();
+        Mthread::numDronesMoved = 0;
+        pthread_cond_broadcast(&Mthread::cDronesCanMove);
+    }
+    pthread_mutex_unlock(&Mthread::mDroneMoving);
+    //decrement #inAir
+    //remove from map
+    //unlock mLanding
 }
 
 void Drone::move(){
@@ -42,7 +56,7 @@ void Drone::move(){
             nextY = path.front().first;
         }
         if (path.empty() && returnPath.size() == 1) {
-
+            //lock mLanding
         }
         while (curY != nextY) {
             World::removeDrone(curY,curX);
@@ -52,7 +66,24 @@ void Drone::move(){
                 --curY;
             }
             World::placeDrone(curY,curX,droneID);
+            pthread_mutex_lock(&Mthread::mDroneMoving);
+            Mthread::numDronesMoved += 1;
+            if (Mthread::numDronesMoved == Mthread::numDronesInAir) {
+                World::printMap();
+                Mthread::numDronesMoved = 0;
+                pthread_cond_broadcast(&Mthread::cDronesCanMove);
+            }else{
+                pthread_cond_wait(&Mthread::cDronesCanMove,&Mthread::mDroneMoving);
+            }
+            pthread_mutex_unlock(&Mthread::mDroneMoving);
+            //increment # moved
+            //if # moved == # in air
+                //print map
+                //broadcast cCanMove
+            //wait on cCanMove,mCanMove
         }
+
+        pthread_mutex_unlock(&Mthread::mTakeoff);
 
         while (curX != nextX) {
             World::removeDrone(curY,curX);
@@ -62,6 +93,16 @@ void Drone::move(){
                 --curX;
             }
             World::placeDrone(curY,curX,droneID);
+            pthread_mutex_lock(&Mthread::mDroneMoving);
+            Mthread::numDronesMoved += 1;
+            if (Mthread::numDronesMoved == Mthread::numDronesInAir) {
+                World::printMap();
+                Mthread::numDronesMoved = 0;
+                pthread_cond_broadcast(&Mthread::cDronesCanMove);
+            }else{
+                pthread_cond_wait(&Mthread::cDronesCanMove,&Mthread::mDroneMoving);
+            }
+            pthread_mutex_unlock(&Mthread::mDroneMoving);
         }
         if (path.empty()) {
             returnPath.pop();

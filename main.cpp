@@ -6,7 +6,6 @@
 #include <pthread.h>
 #include <mutex>
 #include <vector>
-#include <sys/wait.h>
 #include "Drone.h"
 #include "World.h"
 #include "Mthread.h"
@@ -19,12 +18,10 @@ void* droneCreate(void* droneId) {
     Drone d = Drone((long)droneId);
 }
 
-void* printMap(void*) {
-}
-
 int main () {
 
     Mthread::init();
+    srand((int)time(0)); //done so rand() is actually random everytime
 
     int size;
     char db;
@@ -47,13 +44,11 @@ int main () {
     }
     World::createWorld(size);
 
-    pthread_t printMapThread;
-    threadReturn = pthread_create(&printMapThread,NULL,printMap,NULL);
-    if (threadReturn) {
-        std::cout << "thread creation error" << std::endl;
-    }
-
     for (int i = 0; i < numDrones; ++i) {
+        //lock takeoff
+        //set droneTakingOff = true
+        pthread_mutex_lock(&Mthread::mTakeoff);
+        Mthread::droneTakingOff = true;
         threadReturn = pthread_create(&drones[i], NULL, droneCreate, (void *) i);
 
         if (threadReturn) {

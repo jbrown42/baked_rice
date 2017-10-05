@@ -54,7 +54,6 @@ queue<pair<int,int>> World::generatePath(long startAlt){
     pair<int,int> curPair; //coordinates stored (y,x)
     bool firstPos = false;
 
-    srand((int)time(0)); //done so rand() is actually random everytime
     int numSteps = rand()%4; //number of steps to path
 
     //want odd number of steps so that we can add final desination

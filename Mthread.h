@@ -14,7 +14,7 @@ private:
 public:
     //mutexs
     static pthread_mutex_t mNumDronesInAir;
-    static pthread_mutex_t mDronesCanMove;
+    static pthread_mutex_t mDroneMoving;
     static pthread_mutex_t mAllDronesMoved;
     static pthread_mutex_t mNumDronesMoved;
     static pthread_mutex_t mTakeoff;
