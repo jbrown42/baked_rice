@@ -33,9 +33,9 @@ int main () {
         printf("Woah! That's way too small, try 9 or higher\n");
         scanf("%d",&size);
     }
-    printf("How many drones? (0<n<10)\n");
+    printf("How many drones? (0<n<11)\n");
     scanf("%d",&numDrones);
-    while(numDrones <= 0 || numDrones >= 10) {
+    while(numDrones <= 0 || numDrones >= 11) {
         printf("Come on now, at least one drone, at most ten.\n");
         scanf("%d",&numDrones);
     }
