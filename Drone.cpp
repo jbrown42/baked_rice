@@ -8,7 +8,6 @@
  */
 
 #include <pthread.h>
-#include <iostream>
 #include "World.h"
 #include "Drone.h"
 #include "Mthread.h"

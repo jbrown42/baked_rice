@@ -7,7 +7,6 @@
  */
 
 #include <iostream>
-#include <ctime>
 #include "World.h"
 using namespace std;
 
