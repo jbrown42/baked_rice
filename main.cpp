@@ -1,6 +1,10 @@
-//
-// Created by jared on 9/20/17.
-//
+/*
+ * Created by jared on 9/20/17.
+ *
+ * Main class that runs the project. Creates the world and
+ * all drones, each being a pthread running concurrently, and
+ * exits.
+ */
 
 #include <iostream>
 #include <pthread.h>
@@ -23,7 +27,6 @@ int main () {
     srand((int)time(0)); //done so rand() is actually random everytime
 
     int size;
-    char db;
     printf("What size map would you like? (>=9)\n");
     scanf("%d",&size);
     while (size < 9) {
@@ -37,21 +40,11 @@ int main () {
         scanf("%d",&numDrones);
     }
     pthread_t drones[numDrones];
-    printf("Are you debugging?\n");
-    scanf(" %c",&db);
-    while (db != 'y' && db != 'n') {
-        printf("Please enter y or n\n");
-        scanf(" %c",&db);
-    }
-    if (db == 'y') {
-        World::debug = true;
-    } else {
-        World::debug = false;
-    }
+
     World::createWorld(size);
 
-    for (int i = 0; i < numDrones; ++i) {
-        pthread_mutex_lock(&Mthread::mTakeoff);
+    for (long i = 0; i < numDrones; ++i) {
+        pthread_mutex_lock(&Mthread::mTakeoff); //lock so drones launch staggered
         threadReturn = pthread_create(&drones[i], NULL, droneCreate, (void *) i);
 
         if (threadReturn) {

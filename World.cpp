@@ -1,6 +1,11 @@
-//
-// Created by jared on 9/24/17.
-//
+/*
+ * Created by jared on 9/24/17.
+ *
+ * Static class that represents the world. Contains methods
+ * to create the initial instance of the map, place and remove
+ * drones from the map and generate paths for the drones.
+ */
+
 #include <iostream>
 #include <ctime>
 #include "World.h"
@@ -8,13 +13,20 @@ using namespace std;
 
 int World::mapHeight;
 int World::mapWidth;
-bool World::debug;
 
 /*coordinates stored (y,x)
   top left is (0,0)
   bottom left is (mapHeight-1,0)*/
 map<int,vector<string>> World::world;
 
+/*
+ * Creates the instance of the map, should only be
+ * called once since map is static. The map has a
+ * height of size and a width of size*2. The Airport
+ * is placed at the bottom left corner of the map.
+ *
+ * @param size - size of the map
+ */
 void World::createWorld(int size) {
     mapHeight = size;
     mapWidth = size * 2;
@@ -26,8 +38,10 @@ void World::createWorld(int size) {
     world[mapHeight-1][0] = "A"; //drone airport
 }
 
+/*
+ * Prints the map out.
+ */
 void World::printMap() {
-    if (debug) return;
     for(int i = 0; i < mapHeight; ++i) {
         for (int j = 0; j < mapWidth; ++j) {
             cout<<" "<<world[i][j]<<" ";
@@ -37,7 +51,20 @@ void World::printMap() {
     cout<<endl;
 }
 
+/*
+ * Places drone onto the map at given x and y coordinate,
+ * drone at a position is identified by the given drone's ID.
+ * If placed outside the boundaries of the map or if a
+ * drone is already a the position, an error is signaled.
+ *
+ * @param y - y position on map to place drone
+ * @param x - x position on map to place drone
+ * @param ID - id of drone
+ *
+ * @return 0 if successfull, -1 if error occurs
+ */
 int World::placeDrone(int y, int x, int ID) {
+    //if placing drone outside of map boundaries
     if (y < 0 || y >= mapHeight) {
         return -1;
     }
@@ -52,6 +79,13 @@ int World::placeDrone(int y, int x, int ID) {
     return 0;
 }
 
+/*
+ * Removes a drone from the map container. Should be
+ * called before placeDrone is called.
+ *
+ * @param y - y coordinate of drone to remove
+ * @param x - x coordinate of drone to remove
+ */
 void World::removeDrone(int y, int x) {
     if ((y == mapHeight -1) && (x == 0)) {
         world[y][x] = "A";
@@ -60,6 +94,16 @@ void World::removeDrone(int y, int x) {
     }
 }
 
+/*
+ * Generates a random path for a drone and returns it to
+ * the calling object. The first coordinate is the airport
+ * and the last is the landing location of the drone. All
+ * paths are randomly generated so that every time the scenario
+ * is unique.
+ *
+ * @param startAlt - starting altitude for the given drone
+ * @return the path made up of pair coordinates (y,x)
+ */
 queue<pair<int,int>> World::generatePath(long startAlt){
     queue<pair<int,int>> ret;
     pair<int,int> curPair; //coordinates stored (y,x)
