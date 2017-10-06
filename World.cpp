@@ -37,11 +37,19 @@ void World::printMap() {
     cout<<endl;
 }
 
-void World::placeDrone(int y, int x, int ID) {
+int World::placeDrone(int y, int x, int ID) {
+    if (y < 0 || y >= mapHeight) {
+        return -1;
+    }
+    if (x < 0 || x >= mapWidth) {
+        return -1;
+    }
     if (world[y][x] != "~" && world[y][x] != "A") {
         printf("COLLISION\n");
+        return -1;
     }
     world[y][x] = to_string(ID);
+    return 0;
 }
 
 void World::removeDrone(int y, int x) {

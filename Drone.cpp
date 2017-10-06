@@ -21,7 +21,6 @@ Drone::Drone(long ID) {
 void Drone::takeoff() {
     curX = path.front().second;
     curY = path.front().first;
-//    cout<<droneID<<"("<<curY<<","<<curX<<")\n";
     returnPath.push((path.front()));
     path.pop();
     World::placeDrone(curY,curX,droneID);
@@ -41,6 +40,48 @@ void Drone::land() {
     pthread_mutex_unlock(&Mthread::mDroneMoving);
 }
 
+void Drone::avoidCollision(bool vertical, bool positive){
+    if (vertical) {
+        if (World::placeDrone(curY,curX+1,droneID) == 0) {
+            ++curX;
+        } else if (World::placeDrone(curY,curX-1,droneID) == 0) {
+            --curX;
+        } else if (positive) {
+            if ((World::placeDrone(curY-1,curX,droneID) == 0)) {
+                --curY;
+            } else {
+                printf("%d drone surrounded\n",droneID);
+            }
+        } else {
+            if ((World::placeDrone(curY-1,curX,droneID) == 0)) {
+                ++curY;
+            } else {
+                printf("%d drone surrounded\n",droneID);
+            }
+        }
+        printf("%d avoided vertical collison\n", droneID);
+    } else {
+        if (World::placeDrone(curY+1,curX,droneID) == 0) {
+            ++curY;
+        } else if (World::placeDrone(curY-1,curX,droneID) == 0) {
+            --curY;
+        } else if (positive) {
+            if ((World::placeDrone(curY,curX-1,droneID) == 0)) {
+                --curX;
+            } else {
+                printf("%d drone surrounded\n",droneID);
+            }
+        } else {
+            if ((World::placeDrone(curY,curX+1,droneID) == 0)) {
+                ++curX;
+            } else {
+                printf("%d drone surrounded\n",droneID);
+            }
+        }
+        printf("%d avoided horizontal collison\n", droneID);
+    }
+}
+
 void Drone::move(){
     while (!path.empty() || !returnPath.empty()) {
         if (path.empty()) {
@@ -56,11 +97,18 @@ void Drone::move(){
             pthread_mutex_lock(&Mthread::mDroneMoving);
             World::removeDrone(curY,curX);
             if (curY < nextY) {
-                ++curY;
+                if (World::placeDrone(curY + 1,curX,droneID) == -1) {
+                    avoidCollision(true,true);
+                } else {
+                    ++curY;
+                }
             } else {
-                --curY;
+                if (World::placeDrone(curY - 1,curX,droneID) == -1) {
+                    avoidCollision(true,false);
+                } else {
+                    --curY;
+                }
             }
-            World::placeDrone(curY,curX,droneID);
             Mthread::numDronesMoved += 1;
             if (Mthread::numDronesMoved == Mthread::numDronesInAir) {
                 World::printMap();
@@ -72,17 +120,27 @@ void Drone::move(){
             pthread_mutex_unlock(&Mthread::mDroneMoving);
         }
 
-        pthread_mutex_unlock(&Mthread::mTakeoff);
+        if (takingOff) {
+            takingOff = false;
+            pthread_mutex_unlock(&Mthread::mTakeoff);
+        }
 
         while (curX != nextX) {
             pthread_mutex_lock(&Mthread::mDroneMoving);
             World::removeDrone(curY,curX);
             if (curX < nextX) {
-                ++curX;
+                if (World::placeDrone(curY,curX + 1,droneID) == -1) {
+                    avoidCollision(false,true);
+                } else {
+                    ++curX;
+                }
             } else {
-                --curX;
+                if (World::placeDrone(curY,curX - 1,droneID) == -1) {
+                    avoidCollision(false,false);
+                } else {
+                    --curX;
+                }
             }
-            World::placeDrone(curY,curX,droneID);
             Mthread::numDronesMoved += 1;
             if (Mthread::numDronesMoved == Mthread::numDronesInAir) {
                 World::printMap();
@@ -99,7 +157,6 @@ void Drone::move(){
             returnPath.push((path.front()));
             path.pop();
         }
-//        cout<<droneID<<"("<<nextY<<","<<nextX<<")\n";
     }
     land();
 }

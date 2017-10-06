@@ -22,7 +22,7 @@ public:
     static void createWorld(int size);
     static void printMap();
     static std::queue<std::pair<int,int>> generatePath(long longAlt);
-    static void placeDrone(int y, int x, int ID);
+    static int placeDrone(int y, int x, int ID);
     static void removeDrone(int y, int x);
 };
 

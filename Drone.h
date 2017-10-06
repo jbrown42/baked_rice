@@ -20,6 +20,7 @@ private:
     void move();
     void takeoff();
     void land();
+    void avoidCollision(bool vertical, bool positive);
     long droneID;
     bool takingOff;
 public:

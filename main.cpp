@@ -24,10 +24,10 @@ int main () {
 
     int size;
     char db;
-    printf("What size map would you like? (>=8)\n");
+    printf("What size map would you like? (>=9)\n");
     scanf("%d",&size);
-    while (size < 8) {
-        printf("Woah! That's way too small, try 8 or higher\n");
+    while (size < 9) {
+        printf("Woah! That's way too small, try 9 or higher\n");
         scanf("%d",&size);
     }
     printf("How many drones? (0<n<10)\n");
@@ -52,11 +52,11 @@ int main () {
 
     for (int i = 0; i < numDrones; ++i) {
         pthread_mutex_lock(&Mthread::mTakeoff);
-        Mthread::droneTakingOff = true;
         threadReturn = pthread_create(&drones[i], NULL, droneCreate, (void *) i);
 
         if (threadReturn) {
             std::cout << "thread creation error" << std::endl;
+            return -1;
         }
     }
 
