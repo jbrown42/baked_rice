@@ -71,7 +71,6 @@ int World::placeDrone(int y, int x, int ID) {
         return -1;
     }
     if (world[y][x] != "~" && world[y][x] != "A") {
-        printf("COLLISION\n");
         return -1;
     }
     world[y][x] = to_string(ID);
