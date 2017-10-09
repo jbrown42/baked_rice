@@ -185,18 +185,25 @@ void Drone::move(){
         //move horizontally to horizontal coordinate
         while (curX != nextX) {
             pthread_mutex_lock(&Mthread::mDroneMoving);
-            World::removeDrone(curY,curX);
-            if (curX < nextX) {
-                if (World::placeDrone(curY,curX + 1,droneID) == -1) {
-                    avoidCollision(false,true);
+            for (int i = 0; i < 2; ++i) {
+                World::removeDrone(curY, curX);
+                if (curX < nextX) {
+                    if (World::placeDrone(curY, curX + 1, droneID) == -1) {
+                        avoidCollision(false, true);
+                    } else {
+                        ++curX;
+                    }
+                } else if (curX > nextX){
+                    if (World::placeDrone(curY, curX - 1, droneID) == -1) {
+                        avoidCollision(false, false);
+                    } else {
+                        --curX;
+                    }
                 } else {
-                    ++curX;
-                }
-            } else {
-                if (World::placeDrone(curY,curX - 1,droneID) == -1) {
-                    avoidCollision(false,false);
-                } else {
-                    --curX;
+                    if (World::placeDrone(curY, curX, droneID) == -1) {
+                        avoidCollision(false, false);
+                    }
+                    break;
                 }
             }
             Mthread::numDronesMoved += 1;
