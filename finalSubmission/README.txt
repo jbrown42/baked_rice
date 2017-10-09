@@ -3,6 +3,21 @@ CSE321 - Realtime and Embedded Systems
 LAB1 - DCAS Readme
 
 ***************************************
+Program Details
+***************************************
+Map details
+  ~ - represent open space in map
+  A - represents airport
+  (0-9) - represents diferrent drones
+  Top of map is sky, bottom of map is the ground.
+  The map will print once per frame (aka after all drones move).
+
+Drones move with 1 speed vertically and 2 speed horizontally.
+Only one drone can leave the airport at a time because of the mutex locks.
+Only one drone can land at the airport at a time because if a drone is landing and another drone tries to land, the 2nd drone will treat this as a collision and will avoid it, therefore not landing.
+Drone paths are randomly generated and are therefore different everytime.
+
+***************************************
 Building the Project
 ***************************************
 1. In terminal, navigate to the directory this README is located in.
@@ -29,6 +44,7 @@ After building the project and before cleaning it, do the following
 5. The map uses 'A' to denote the airport and a number from 0-number of Drones to denote the drones.
 6. If a collision occurs, the map will print out '<droneID> avoided vertical/horizontal collision' depending on the type.
 7. The frame before this statement will the frame before the collision and the one after will be where the collision was avoided.
+*Note on collision: Since drones move two places when moving horizontally, a drone could move one space and be fine but collide with a drone on it's second move. Also, since the map doesn't print until all drones have moved, this type of collision may appear as though a drone moved diagonally, when it reality it moved horizontally one space and then vertically to avoid a collision. Therefore, you can see my drones still only move horizontally and vertically.
 
 ***************************************
 Capturing the Project Output

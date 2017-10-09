@@ -89,8 +89,8 @@
       <file leaf-file-name="Drone.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Drone.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="202" column="52" lean-forward="true" selection-start-line="202" selection-start-column="52" selection-end-line="202" selection-end-column="52" />
+            <state relative-caret-position="147">
+              <caret line="187" column="85" lean-forward="false" selection-start-line="187" selection-start-column="85" selection-end-line="187" selection-end-column="85" />
               <folding>
                 <element signature="e#263#283#0" expanded="true" />
               </folding>
@@ -156,6 +156,7 @@
       <find>drone</find>
       <find>collision</find>
       <find>coll</find>
+      <find>hori</find>
     </findStrings>
     <replaceStrings>
       <replace>world</replace>
@@ -277,12 +278,12 @@
       <workItem from="1506901652169" duration="41000" />
       <workItem from="1506957694173" duration="4428000" />
       <workItem from="1506986270340" duration="13372000" />
-      <workItem from="1507567194323" duration="317000" />
+      <workItem from="1507567194323" duration="931000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="76494000" />
+    <option name="totallyTimeSpent" value="77108000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="14" width="1920" height="923" extended-state="6" />
@@ -293,7 +294,7 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3283582" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3345771" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.49004975" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35199004" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329602" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -774,8 +775,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Drone.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="202" column="52" lean-forward="true" selection-start-line="202" selection-start-column="52" selection-end-line="202" selection-end-column="52" />
+        <state relative-caret-position="147">
+          <caret line="187" column="85" lean-forward="false" selection-start-line="187" selection-start-column="85" selection-end-line="187" selection-end-column="85" />
           <folding>
             <element signature="e#263#283#0" expanded="true" />
           </folding>
