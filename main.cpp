@@ -16,7 +16,7 @@
 //Number of drones to run the simulation with
 int numDrones = 10;
 
-//mapSize of the map to run the simulation with
+//size of the map to run the simulation with
 int size = 20;
 
 //stores the return value of a thread to check for errors

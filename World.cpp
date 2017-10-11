@@ -31,7 +31,7 @@ map<int,vector<pthread_mutex_t>> World::mWorld;
  * @param mapSize - mapSize of the map
  */
 void World::createWorld(int size) {
-    size = size;
+    mapSize = size;
     for(int i = 0; i < size; ++i){
         for(int j = 0; j < size; ++j) {
             pthread_mutex_t newMutex;
