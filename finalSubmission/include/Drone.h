@@ -19,12 +19,12 @@ private:
     int nextY;
     void move();
     void takeoff();
-    void land();
     void avoidCollision(bool vertical, bool positive);
     long droneID;
-    bool takingOff;
+    struct timespec waitTime;
 public:
     Drone(long ID);
+    int getID();
     std::pair<int,int> getPos();
 };
 

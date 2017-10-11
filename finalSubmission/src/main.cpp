@@ -12,39 +12,66 @@
 #include <vector>
 #include "Drone.h"
 #include "World.h"
-#include "Mthread.h"
 
-int numDrones;
+//Number of drones to run the simulation with
+int numDrones = 10;
+
+//size of the map to run the simulation with
+int size = 20;
+
+//stores the return value of a thread to check for errors
 int threadReturn;
 
+//array holding pthread ids of all the drones
+pthread_t drones[10];
+
+//holds the pthread id of the map printing thread
+pthread_t map;
+
+//map waits this long before printing
+struct timespec mapRate;
+
+//airport waits this long before launching a drone
+//done to avoid takeoff collisions
+struct timespec launchRate;
+
+/*
+ * Pthread function called to create a drone thread.
+ * @param - ID of the drone to be created
+ */
 void* droneCreate(void* droneId) {
     Drone d = Drone((long)droneId);
 }
 
+/*
+ * Pthread function used to print the map. Loops until all drones have
+ * gone out and come back.
+ */
+void* printMap(void*) {
+    while (World::numDronesLanded != numDrones) {
+        nanosleep(&mapRate, NULL);
+        World::printMap();
+    }
+}
+
 int main () {
+    mapRate.tv_sec = 0;
+    mapRate.tv_nsec = 1600000; //.5 seconds
+    launchRate.tv_sec = 2;
+    launchRate.tv_nsec = 0;
 
-    Mthread::init();
     srand((int)time(0)); //done so rand() is actually random everytime
-
-    int size;
-    printf("What size map would you like? (>=9)\n");
-    scanf("%d",&size);
-    while (size < 9) {
-        printf("Woah! That's way too small, try 9 or higher\n");
-        scanf("%d",&size);
-    }
-    printf("How many drones? (0<n<11)\n");
-    scanf("%d",&numDrones);
-    while(numDrones <= 0 || numDrones >= 11) {
-        printf("Come on now, at least one drone, at most ten.\n");
-        scanf("%d",&numDrones);
-    }
-    pthread_t drones[numDrones];
 
     World::createWorld(size);
 
+    threadReturn = pthread_create(&map, NULL, printMap,NULL);
+    if (threadReturn) {
+        std::cout<<"Error creating map thread"<<std::endl;
+        return -1;
+    }
+
     for (long i = 0; i < numDrones; ++i) {
-        pthread_mutex_lock(&Mthread::mTakeoff); //lock so drones launch staggered
+        nanosleep(&launchRate,NULL);
         threadReturn = pthread_create(&drones[i], NULL, droneCreate, (void *) i);
 
         if (threadReturn) {
@@ -53,6 +80,6 @@ int main () {
         }
     }
 
-    pthread_exit(NULL);
+    pthread_exit(NULL); //done so program doesn't terminate after main finishes
 
 }

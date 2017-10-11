@@ -9,21 +9,22 @@
 #include <map>
 #include <queue>
 #include <string>
+#include <pthread.h>
 #include "Drone.h"
 
 class World {
 private:
-    static int mapHeight;
-    static int mapWidth;
+    static int mapSize;
     static std::map<int,std::vector<std::string>> world;
+    static std::map<int, std::vector<pthread_mutex_t>> mWorld;
     World();
 public:
-    static bool debug;
+    static void land();
     static void createWorld(int size);
     static void printMap();
     static std::queue<std::pair<int,int>> generatePath(long longAlt);
-    static int placeDrone(int y, int x, int ID);
-    static void removeDrone(int y, int x);
+    static int placeDrone(int y, int x, Drone* drone);
+    static int numDronesLanded;
 };
 
 #endif //BAKED_RICE_WORLD_H
