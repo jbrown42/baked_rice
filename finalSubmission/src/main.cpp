@@ -56,9 +56,8 @@ void* printMap(void*) {
 
 int main () {
     mapRate.tv_sec = 0;
-    mapRate.tv_nsec = 1600000; //.5 seconds
+    mapRate.tv_nsec = 50000000; //.5 seconds
     launchRate.tv_sec = 2;
-    launchRate.tv_nsec = 0;
 
     srand((int)time(0)); //done so rand() is actually random everytime
 

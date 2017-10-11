@@ -22,7 +22,7 @@ using namespace std;
  */
 Drone::Drone(long ID) {
     waitTime.tv_sec = 0;
-    waitTime.tv_nsec = 156349822 * (rand() % 5) + 1; //5 arbitrary speeds possible
+    waitTime.tv_nsec = 156349822 * ((rand() % 5) + 1); //5 arbitrary speeds possible
     droneID = ID;
     path = World::generatePath(droneID);
     takeoff();
