@@ -14,7 +14,7 @@
 
 class World {
 private:
-    static int size;
+    static int mapSize;
     static std::map<int,std::vector<std::string>> world;
     static std::map<int, std::vector<pthread_mutex_t>> mWorld;
     World();

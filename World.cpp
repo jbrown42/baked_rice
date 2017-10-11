@@ -10,25 +10,25 @@
 #include "World.h"
 using namespace std;
 
-//size of the map (size x size map)
-int World::size;
+//mapSize of the map (mapSize x mapSize map)
+int World::mapSize;
 
 //Tracks the number of drones landed so map knows to stop printing.
 int World::numDronesLanded = 0;
 
 /*coordinates stored (y,x)
   top left is (0,0)
-  bottom left is (size-1,0)*/
+  bottom left is (mapSize-1,0)*/
 map<int,vector<string>> World::world;
 map<int,vector<pthread_mutex_t>> World::mWorld;
 
 /*
  * Creates the instance of the map, should only be
  * called once since map is static. The map has a
- * height of size and a width of size*2. The Airport
+ * height of mapSize and a width of mapSize*2. The Airport
  * is placed at the bottom left corner of the map.
  *
- * @param size - size of the map
+ * @param mapSize - mapSize of the map
  */
 void World::createWorld(int size) {
     size = size;
@@ -47,8 +47,8 @@ void World::createWorld(int size) {
  * Prints the map out.
  */
 void World::printMap() {
-    for(int i = 0; i < size; ++i) {
-        for (int j = 0; j < size; ++j) {
+    for(int i = 0; i < mapSize; ++i) {
+        for (int j = 0; j < mapSize; ++j) {
             cout<<" "<<world[i][j]<<" ";
         }
         cout<<endl;
@@ -69,10 +69,10 @@ void World::printMap() {
  * @return 0 if successful, -1 if error occurs
  */
 int World::placeDrone(int y, int x, Drone* drone) {
-    if (y < 0 || y >= size) {
+    if (y < 0 || y >= mapSize) {
         return -1;
     }
-    if (x < 0 || x >= size) {
+    if (x < 0 || x >= mapSize) {
         return -1;
     }
     if (pthread_mutex_trylock(&mWorld[y][x]) == EBUSY) {
@@ -82,7 +82,7 @@ int World::placeDrone(int y, int x, Drone* drone) {
     pair<int,int> pos = drone->getPos();
     int oldy = pos.first;
     int oldx = pos.second;
-    if ((oldy == size -1) && (oldx == 0)) {
+    if ((oldy == mapSize -1) && (oldx == 0)) {
         world[oldy][oldx] = "A";
     } else {
         world[oldy][oldx] = "~";
@@ -95,8 +95,8 @@ int World::placeDrone(int y, int x, Drone* drone) {
  * Removes the drone from the airport on the map when it lands.
  */
 void World::land() {
-    pthread_mutex_unlock(&mWorld[size -1][0]);
-    world[size -1][0] = 'A';
+    pthread_mutex_unlock(&mWorld[mapSize -1][0]);
+    world[mapSize -1][0] = 'A';
     numDronesLanded += 1;
 }
 
@@ -122,24 +122,24 @@ queue<pair<int,int>> World::generatePath(long startAlt){
         numSteps += 1; //need at least 1 step and an odd amount
     }
 
-    curPair.first = size -1;
+    curPair.first = mapSize -1;
     curPair.second = 0;
     ret.push(curPair);
     curPair.first = startAlt;
     ret.push(curPair);
 
-    //first pos is airport(size -1,0) (needed for move function)
+    //first pos is airport(mapSize -1,0) (needed for move function)
     //second is (startAlt,0)
     //third is (last,rand)
     //fourth is (rand,last)
     //....
-    //last is (size -1, last)
+    //last is (mapSize -1, last)
     for(int i = 0; i < numSteps; ++i){
         if (firstPos) {
-            curPair.first = rand() % size;
+            curPair.first = rand() % mapSize;
             firstPos = false;
         } else {
-            curPair.second = rand() % size;
+            curPair.second = rand() % mapSize;
             if (curPair.second == 0) {
                 curPair.second += 1;
             }
@@ -149,7 +149,7 @@ queue<pair<int,int>> World::generatePath(long startAlt){
     }
 
     //want to add final destination at bottom of map (ground)
-    curPair.first = size - 1;
+    curPair.first = mapSize - 1;
     ret.push(curPair);
 
     return ret;

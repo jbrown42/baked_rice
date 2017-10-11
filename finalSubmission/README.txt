@@ -37,7 +37,7 @@ Running the Project
 ***************************************
 After building the project and before cleaning it, do the following
 1. Navigate to the project directory and run ./dcas
-2. The project will ask you how large of a map you would like, type the size (int) and press enter
+2. The project will ask you how large of a map you would like, type the mapSize (int) and press enter
 3. The project will ask you how many drones you would like, type the amount (int) and press enter
 *Note: if you don't type an int into the prompt, hit CTRL + C to kill the program and try again, following instructions this time*
 4. The program will then print out every frame of movement.
