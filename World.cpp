@@ -10,13 +10,17 @@
 #include "World.h"
 using namespace std;
 
-int World::mapHeight;
-int World::mapWidth;
+//size of the map (size x size map)
+int World::size;
+
+//Tracks the number of drones landed so map knows to stop printing.
+int World::numDronesLanded = 0;
 
 /*coordinates stored (y,x)
   top left is (0,0)
-  bottom left is (mapHeight-1,0)*/
+  bottom left is (size-1,0)*/
 map<int,vector<string>> World::world;
+map<int,vector<pthread_mutex_t>> World::mWorld;
 
 /*
  * Creates the instance of the map, should only be
@@ -27,22 +31,24 @@ map<int,vector<string>> World::world;
  * @param size - size of the map
  */
 void World::createWorld(int size) {
-    mapHeight = size;
-    mapWidth = size * 2;
-    for(int i = 0; i < mapHeight; ++i){
-        for(int j = 0; j < mapWidth; ++j) {
+    size = size;
+    for(int i = 0; i < size; ++i){
+        for(int j = 0; j < size; ++j) {
+            pthread_mutex_t newMutex;
+            pthread_mutex_init(&newMutex,NULL);
+            mWorld[i].push_back(newMutex);
             world[i].push_back("~");
         }
     }
-    world[mapHeight-1][0] = "A"; //drone airport
+    world[size-1][0] = "A"; //drone airport
 }
 
 /*
  * Prints the map out.
  */
 void World::printMap() {
-    for(int i = 0; i < mapHeight; ++i) {
-        for (int j = 0; j < mapWidth; ++j) {
+    for(int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
             cout<<" "<<world[i][j]<<" ";
         }
         cout<<endl;
@@ -60,36 +66,38 @@ void World::printMap() {
  * @param x - x position on map to place drone
  * @param ID - id of drone
  *
- * @return 0 if successfull, -1 if error occurs
+ * @return 0 if successful, -1 if error occurs
  */
-int World::placeDrone(int y, int x, int ID) {
-    //if placing drone outside of map boundaries
-    if (y < 0 || y >= mapHeight) {
+int World::placeDrone(int y, int x, Drone* drone) {
+    if (y < 0 || y >= size) {
         return -1;
     }
-    if (x < 0 || x >= mapWidth) {
+    if (x < 0 || x >= size) {
         return -1;
     }
-    if (world[y][x] != "~" && world[y][x] != "A") {
+    if (pthread_mutex_trylock(&mWorld[y][x]) == EBUSY) {
         return -1;
     }
-    world[y][x] = to_string(ID);
+    world[y][x] = to_string(drone->getID());
+    pair<int,int> pos = drone->getPos();
+    int oldy = pos.first;
+    int oldx = pos.second;
+    if ((oldy == size -1) && (oldx == 0)) {
+        world[oldy][oldx] = "A";
+    } else {
+        world[oldy][oldx] = "~";
+    }
+    pthread_mutex_unlock(&mWorld[oldy][oldx]);
     return 0;
 }
 
 /*
- * Removes a drone from the map container. Should be
- * called before placeDrone is called.
- *
- * @param y - y coordinate of drone to remove
- * @param x - x coordinate of drone to remove
+ * Removes the drone from the airport on the map when it lands.
  */
-void World::removeDrone(int y, int x) {
-    if ((y == mapHeight -1) && (x == 0)) {
-        world[y][x] = "A";
-    } else {
-        world[y][x] = "~";
-    }
+void World::land() {
+    pthread_mutex_unlock(&mWorld[size -1][0]);
+    world[size -1][0] = 'A';
+    numDronesLanded += 1;
 }
 
 /*
@@ -114,24 +122,24 @@ queue<pair<int,int>> World::generatePath(long startAlt){
         numSteps += 1; //need at least 1 step and an odd amount
     }
 
-    curPair.first = mapHeight -1;
+    curPair.first = size -1;
     curPair.second = 0;
     ret.push(curPair);
     curPair.first = startAlt;
     ret.push(curPair);
 
-    //first pos is airport(mapHeight -1,0) (needed for move function)
+    //first pos is airport(size -1,0) (needed for move function)
     //second is (startAlt,0)
     //third is (last,rand)
     //fourth is (rand,last)
     //....
-    //last is (mapHeight -1, last)
+    //last is (size -1, last)
     for(int i = 0; i < numSteps; ++i){
         if (firstPos) {
-            curPair.first = rand() % mapHeight;
+            curPair.first = rand() % size;
             firstPos = false;
         } else {
-            curPair.second = rand() % mapWidth;
+            curPair.second = rand() % size;
             if (curPair.second == 0) {
                 curPair.second += 1;
             }
@@ -141,7 +149,7 @@ queue<pair<int,int>> World::generatePath(long startAlt){
     }
 
     //want to add final destination at bottom of map (ground)
-    curPair.first = mapHeight - 1;
+    curPair.first = size - 1;
     ret.push(curPair);
 
     return ret;

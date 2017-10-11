@@ -25,5 +25,4 @@ void Mthread::init() {
     pthread_mutex_init(&mTakeoff,NULL);
 
     pthread_cond_init(&cDronesCanMove,NULL);
-
 }
