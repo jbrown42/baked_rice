@@ -8,14 +8,13 @@ Program Details
 Map details
   ~ - represent open space in map
   A - represents airport
-  (0-9) - represents diferrent drones
-  Top of map is sky, bottom of map is the ground.
-  The map will print once per frame (aka after all drones move).
+  (0-9) - represents different drones
+  Top of map is sky, bottom of map is the ground
+  The map will print once every .05 seconds for smooth movement
 
-Drones move with 1 speed vertically and 2 speed horizontally.
-Only one drone can leave the airport at a time because of the mutex locks.
-Only one drone can land at the airport at a time because if a drone is landing and another drone tries to land, the 2nd drone will treat this as a collision and will avoid it, therefore not landing.
-Drone paths are randomly generated and are therefore different everytime.
+Drones move an arbitrary speed along a random path generated at their creation.
+Only one drone can leave the airport at a time due to the launch delay.
+Only one drone can land at the airport at a time because of collision avoidance.
 
 ***************************************
 Building the Project
@@ -37,20 +36,16 @@ Running the Project
 ***************************************
 After building the project and before cleaning it, do the following
 1. Navigate to the project directory and run ./dcas
-2. The project will ask you how large of a map you would like, type the mapSize (int) and press enter
-3. The project will ask you how many drones you would like, type the amount (int) and press enter
-*Note: if you don't type an int into the prompt, hit CTRL + C to kill the program and try again, following instructions this time*
-4. The program will then print out every frame of movement.
-5. The map uses 'A' to denote the airport and a number from 0-number of Drones to denote the drones.
-6. If a collision occurs, the map will print out '<droneID> avoided vertical/horizontal collision' depending on the type.
-7. The frame before this statement will the frame before the collision and the one after will be where the collision was avoided.
-*Note on collision: Since drones move two places when moving horizontally, a drone could move one space and be fine but collide with a drone on it's second move. Also, since the map doesn't print until all drones have moved, this type of collision may appear as though a drone moved diagonally, when it reality it moved horizontally one space and then vertically to avoid a collision. Therefore, you can see my drones still only move horizontally and vertically.
+2. The program will begin print out the map every .05 seconds.
 
 ***************************************
 Capturing the Project Output
 ***************************************
 After bulding the project
-1. Run './dcas > output.txt' to run the project
-2. Follow steps 2, 3 and the Note in Running the Project
-*Note: there will be no prompt when capturing the project so just type the values and press enter*
-3. Open output.txt in vim or some other text editor to view the capture
+1. Run './dcas > output.txt' to run the project (give it time, this will take ~1 minute)
+2. Open output.txt in vim or some other text editor to view the capture
+	2.1 if opening in vim, for best results:
+		2.1.1 resize terminal so that only one map can be seen
+		2.2.2 hold shift and press down or up to move forward or backwars in "time" (should look like a smooth animation)
+	2.2 if opening in text editor:
+		2.1.1 press pgdn button to move forward or backwards in "time" (won't be a smooth as vim)
