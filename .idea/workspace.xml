@@ -12,6 +12,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="842236f4-d6f4-4849-9787-ddbcad1413d4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lab1.tar" afterPath="$PROJECT_DIR$/Lab1.tar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
@@ -266,12 +267,12 @@
       <workItem from="1507727111628" duration="14000" />
       <workItem from="1507737921666" duration="2109000" />
       <workItem from="1508084824035" duration="605000" />
-      <workItem from="1508164138666" duration="895000" />
+      <workItem from="1508164138666" duration="1338000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="93753000" />
+    <option name="totallyTimeSpent" value="94196000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="923" extended-state="6" />
