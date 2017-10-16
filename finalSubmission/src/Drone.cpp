@@ -64,18 +64,15 @@ void Drone::avoidCollision(bool vertical, bool positive){
             if ((World::placeDrone(curY-1,curX,this) == 0)) { //try to move up
                 --curY;
             } else {
-//                printf("%d drone surrounded\n",droneID); //drone surrounded, doesn't move
                 World::placeDrone(curY,curX,this); //drone stays where it was
             }
         } else {
             if ((World::placeDrone(curY+1,curX,this) == 0)) { //try to move down, drone doesn't move
                 ++curY;
             } else {
-//                printf("%d drone surrounded\n",droneID); //drone surrounded, doesn't move
                 World::placeDrone(curY,curX,this); //drone stays where it was
             }
         }
-//        printf("%d avoided vertical collison\n", droneID);
     } else { //drone original tred to move horizontally
         if (World::placeDrone(curY+1,curX,this) == 0) { //try to move down
             ++curY;
@@ -85,18 +82,15 @@ void Drone::avoidCollision(bool vertical, bool positive){
             if ((World::placeDrone(curY,curX-1,this) == 0)) { //try to move left
                 --curX;
             } else {
-//                printf("%d drone surrounded\n",droneID); //drone surrounded, doesn't move
                 World::placeDrone(curY,curX,this); //drone stays where it was
             }
         } else {
             if ((World::placeDrone(curY,curX+1,this) == 0)) { //try to move right
                 ++curX;
             } else {
-//                printf("%d drone surrounded\n",droneID); //drone surrounded, doesn't move
                 World::placeDrone(curY,curX,this); //drone stays where it was
             }
         }
-//        printf("%d avoided horizontal collison\n", droneID);
     }
 }
 
